@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Review Sentiment Analysis</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+            padding: 40px;
+        }
+        .container {
+            width: 450px;
+            margin: auto;
+            background: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 12px rgba(0,0,0,0.15);
+        }
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            font-size: 16px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        button:hover { background: #2980b9; }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8f4ff;
+            border-left: 6px solid #3498db;
+            border-radius: 6px;
+            font-size: 17px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Review Sentiment Predictor</h2>
+
+    <form method="POST" action="/predict">
+        <label>Review Title</label>
+        <input type="text" name="title" required value="{{ title }}">
+
+        <label>Review Text</label>
+        <textarea name="review" required rows="5">{{ review }}</textarea>
+        <button type="submit">Predict Sentiment</button>
+    </form>
+
+    {% if prediction %}
+    <div class="result">
+        <strong>Prediction:</strong> {{ prediction }}
+    </div>
+    {% endif %}
+</div>
+
+</body>
+</html>
+
