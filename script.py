@@ -216,48 +216,6 @@ def main():
     svm_model = svm_cv.fit(train_df).bestModel
     print("=====> SAVING SVM MODEL")
     save_model(svm_model, f"{MODELS_DIR}/svm_lsvc")
-
-    print("\n=====> RUNNING TEST PREDICTIONS")
-    df_pred = nb_model.transform(test_df).withColumnRenamed("prediction", "nb_pred")
-    df_pred = lr_model.transform(df_pred).withColumnRenamed("prediction", "lr_pred")
-    df_pred = svm_model.transform(df_pred).withColumnRenamed("prediction", "svm_pred")
-
-    df_pred = (
-        df_pred
-        .withColumn("nb_i", col("nb_pred").cast(IntegerType()))
-        .withColumn("lr_i", col("lr_pred").cast(IntegerType()))
-        .withColumn("svm_i", col("svm_pred").cast(IntegerType()))
-    )
-
-    df_pred = df_pred.withColumn("preds", array("nb_i", "lr_i", "svm_i"))
-    df_pred = df_pred.withColumn("ensemble_pred", majority_vote_udf(col("preds")))
-
-    print("\n=====> SAVING TEST PREDICTIONS")
-    df_pred.write.mode("overwrite").parquet(f"{ENSEMBLE_DIR}/predictions")
-
-    print("\n=====> CALCULATING ACCURACIES")
-
-    acc_nb = evaluator.evaluate(df_pred.withColumnRenamed("nb_i", "prediction"))
-    acc_lr = evaluator.evaluate(df_pred.withColumnRenamed("lr_i", "prediction"))
-    acc_svm = evaluator.evaluate(df_pred.withColumnRenamed("svm_i", "prediction"))
-    acc_ens = evaluator.evaluate(df_pred.withColumnRenamed("ensemble_pred", "prediction"))
-
-    print("\n=====> ACCURACY RESULTS")
-    print("      NB accuracy  :", acc_nb)
-    print("      LR accuracy  :", acc_lr)
-    print("      SVM accuracy :", acc_svm)
-    print("      Ensemble     :", acc_ens)
-
-    print("\n=====> SAVING METADATA")
-    meta = spark.createDataFrame(
-        [(acc_nb, acc_lr, acc_svm, acc_ens)],
-        ["acc_nb", "acc_lr", "acc_svm", "acc_ensemble"]
-    )
-    meta.write.mode("overwrite").json(f"{METADATA_DIR}/meta")
-
-    print("\n🎉🎉🎉  PIPELINE COMPLETE!  🎉🎉🎉")
-    print("Models saved to:", OUTPUT_BASE)
-
     spark.stop()
 
 
