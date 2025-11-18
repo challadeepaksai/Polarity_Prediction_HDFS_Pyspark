@@ -35,8 +35,7 @@ The raw data is expected to be loaded onto the **Hadoop Distributed File System 
 
 1.  **Clone the repository:**
     ```bash
-    git clone [Your Repository URL]
-    cd [Your Project Directory]
+    git clone https://github.com/challadeepaksai/Polarity_Prediction_HDFS_Pyspark
     ```
 
 2.  **Install dependencies:**
